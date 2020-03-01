@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.IOException;
 
-class coa {
+class addressingMode {
 
     static int search(ArrayList<String> mat, int n, String x) {
         int sum = -1;
