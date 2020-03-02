@@ -3,6 +3,184 @@ import java.util.Scanner;
 import java.io.IOException;
 
 class coa {
+    public static void main(String[] args) {
+        Scanner scn = new Scanner(System.in);
+        String text1, text2, sumt1 = "", sumt2 = "", mode = "";
+        char c, c1;
+        ArrayList<String> data1 = new ArrayList<String>();
+        ArrayList<String> data2 = new ArrayList<String>();
+        String nmem[] = new String[] { "10", "20", "30", "40", "50", "60", "70", "80", "90", "100" };
+        String mem[] = new String[10];
+        for (int i = 0; i < mem.length; i++) {
+            int mes = (int) (Math.random() * 101) + 0;
+            mem[i] = String.valueOf(mes);
+        }
+        System.out.println("                      \"How to fill out information\"                          ");
+        System.out.println("                     --------------------------------                          ");
+        System.out.println("--------------------------------------------------------------------------------");
+        System.out.println("-       Operrator ---->    MOV   ADD     SUB    DIV    LOAD    MUL             -");
+        System.out.println("--------------------------------------------------------------------------------");
+        System.out.println("-        Input Example             |                  Addressing               -");
+        System.out.println("-       --------------             |                 ------------              -");
+        System.out.println("-      ---->   MOV A1,#100         |     #    =  (Immediate Addressing)        -");
+        System.out.println("-                                  |                                           -");
+        System.out.println("-      ---->   ADD 40,stack        |   stack  =  (Stack Addressing)            -");
+        System.out.println("-                                  |                                           -");
+        System.out.println("-      ---->   SUB R3,@R1          |    @     =  (Indirect Addressing)         -");
+        System.out.println("-                                  |                                           -");
+        System.out.println("-      ---->   DIV R2,R3           |  R2,R3   =  (Register Direct Addressing)  -");
+        System.out.println("-                                  |                                           -");
+        System.out.println("-      ---->   LOAD R4,60          |  R4,60   =  (Direct Addressing)           -");
+        System.out.println("-                                  |                                           -");
+        System.out.println("-      ---->   MUL AL,[BP,2]       |   [BP,2] =  (Relative Addressing)         -");
+        System.out.println("-                                  |                                           -");
+        System.out.println("-      ---->   LOAD AL,[SI,2]      |  [SI,2]  =  (Indexed Addressing)          -");
+        System.out.println("-                                  |                                           -");
+        System.out.println("-      ---->   LOAD [BX]           |   [BX]   =  (Register Indirect Addressing)-");
+        System.out.println("-                                  |                                           -");
+        System.out.println("--------------------------------------------------------------------------------\n");
+        System.out.print("Input SI:");
+        String o = scn.next();
+        data1.add("SI");
+        data2.add(o);
+        System.out.print("Input DI:");
+        o = scn.next();
+        data1.add("DI");
+        data2.add(o);
+        System.out.print("Input BX:");
+        o = scn.next();
+        data1.add("BX");
+        data2.add(o);
+        System.out.print("Input BP:");
+        o = scn.next();
+        data1.add("BP");
+        data2.add(o);
+        System.out.println("\n=====================================");
+        setmemory(nmem, mem);
+        System.out.println("\n=====================================");
+        for (text1 = scn.next(), text2 = scn.next(); true; text1 = scn.next(), text2 = scn.next()) {
+            String mess[] = getText(text2);
+            sumt1 = mess[0];
+            sumt2 = mess[1];
+
+            c = sumt2.charAt(0);
+            c1 = sumt2.charAt(sumt2.length() - 1);
+            // ========================================================/ MOV
+            // /======================================================
+            if (text1.equals("MOV") || text1.equals("mov") || text1.equals("LOAD") || text1.equals("load")) {
+                if (c == '#') {
+                    String nohas = sumt2.replace("#", "");
+                    sethasMOV(data1, data2, sumt1, nohas, nmem, mem);
+                    mode = "Immediate Addressing";
+                }else {
+                    setAmovB(data1, data2, sumt1, sumt2, nmem, mem);
+                    mode = "Direct Addressing";
+                }
+                if (c == '@') {
+                    String nohas = sumt2.replace("@", "");
+                    setaddMOV(data1, data2, sumt1, nohas, nmem, mem);
+                    mode = "Indirect Addressing";
+                }
+                if (c == '[' && c1 == ']') {
+                    String noa = sumt2.replace("[", "");
+                    noa = noa.replace("]", "");
+                    int id = searchCom(noa, noa.length());
+                    if (id < 0) {
+                        setaddMOV(data1, data2, sumt1, noa, nmem, mem);
+                    } else {
+                        String tx[] = getText(noa);
+                        String tx1 = tx[0];
+                        String tx2 = tx[1];
+                        if (tx1.equals("SI") || tx1.equals("DI")) {
+                            int i1 = search(data1, data1.size(), tx1);
+                            int num1 = Integer.parseInt(data2.get(i1));
+                            int num2 = Integer.parseInt(tx2);
+                            int sum = num1 + num2;
+                            String s = String.valueOf(sum);
+                            setaddMOV(data1, data2, sumt1, s, nmem, mem);
+                            mode = "Relative Addressing";
+                        }
+                        if (tx1.equals("BP") || tx1.equals("BX")) {
+                            int i1 = search(data1, data1.size(), tx1);
+                            int num1 = Integer.parseInt(data2.get(i1));
+                            int num2 = Integer.parseInt(tx2);
+                            int sum = num1 + num2;
+                            String s = String.valueOf(sum);
+                            setaddMOV(data1, data2, sumt1, s, nmem, mem);
+                            mode = "Relative Addressing";
+                        }
+                    }
+                }
+                if (c == '0' || c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == '6' || c == '7'
+                        || c == '8' || c == '9') {
+                    if (sumt2.equals("stack")) {
+                        setStack(data1, data2, sumt1, mem[9], nmem, mem);
+                        mode = "Stack Addressing";
+                    } else {
+                        setaddMOV(data1, data2, sumt1, sumt2, nmem, mem);
+                        mode = "Direct Addressing";
+                    }
+                } else {
+                    if (sumt2.equals("stack")) {
+                        setStack(data1, data2, sumt1, mem[9], nmem, mem);
+                        mode = "Stack Addressing";
+                    } 
+                }
+            }
+            // ==========================================================/ ADD
+            // /============================================================
+            if (text1.equals("ADD")) {
+                mode=all(mode, c, c1, data1, data2, sumt1, sumt2, nmem, mem, text1);
+            }
+            // ==========================================================/ SUB
+            // /============================================================
+            if (text1.equals("SUB")) {
+                mode=all(mode, c, c1, data1, data2, sumt1, sumt2, nmem, mem, text1);
+            }
+            // ==========================================================/ MUL
+            // /============================================================
+            if (text1.equals("MUL")) {
+                mode=all(mode, c, c1, data1, data2, sumt1, sumt2, nmem, mem, text1);
+            }
+            // ==========================================================/ DIV
+            // /============================================================
+            if (text1.equals("DIV")) {
+                mode=all(mode, c, c1, data1, data2, sumt1, sumt2, nmem, mem, text1);
+            }
+            // =============================================================================================================================
+            System.out.println("\n=====================================");
+            setmemory(nmem, mem);
+            System.out.println("\n=====================================");
+            System.out.println("\nRegister\tResgiser Value");
+            for (int i = 0; i < data1.size(); i++) {
+                System.out.println(data1.get(i) + "\t\t " + data2.get(i));
+            }
+            int i = search(data1, data1.size(), sumt1);
+            int i1 = searchMem(nmem, nmem.length, sumt1);
+            System.out.println("\n=====================================");
+            if (i >= 0 && i >= 0) {
+                System.out.println(data1.get(i) + "=" + data2.get(i) + "-->" + mode);
+            } else {
+                if (sumt1.equals("stack")) {
+                    System.out.println("\n=====================================");
+                    System.out.println(sumt1 + "=" + mem[9] + "--> Stack Addressing");
+                    System.out.println("\n=====================================");
+                    continue;
+                }
+                System.out.println("\n=====================================");
+                if(i1<0){
+                    continue;
+                }
+                System.out.println(sumt1 + "=" + mem[i1] + "-->" + mode);
+                System.out.println("\n=====================================");
+                continue;
+            }
+            System.out.println("\n=====================================");
+            sumt1 = sumt1.replace(sumt1, "");
+            sumt2 = sumt2.replace(sumt2, "");
+        }
+    }
+
 
     static int search(ArrayList<String> mat, int n, String x) {
         int sum = -1;
@@ -424,183 +602,4 @@ class coa {
             System.out.println(sumt1 + " Not in memory");
         }
     }
-
-    public static void main(String[] args) {
-        Scanner scn = new Scanner(System.in);
-        String text1, text2, sumt1 = "", sumt2 = "", mode = "";
-        char c, c1;
-        ArrayList<String> data1 = new ArrayList<String>();
-        ArrayList<String> data2 = new ArrayList<String>();
-        String nmem[] = new String[] { "10", "20", "30", "40", "50", "60", "70", "80", "90", "100" };
-        String mem[] = new String[10];
-        for (int i = 0; i < mem.length; i++) {
-            int mes = (int) (Math.random() * 101) + 0;
-            mem[i] = String.valueOf(mes);
-        }
-        System.out.println("                      \"How to fill out information\"                          ");
-        System.out.println("                     --------------------------------                          ");
-        System.out.println("--------------------------------------------------------------------------------");
-        System.out.println("-       Operrator ---->    MOV   ADD     SUB    DIV    LOAD    MUL             -");
-        System.out.println("--------------------------------------------------------------------------------");
-        System.out.println("-        Input Example             |                  Addressing               -");
-        System.out.println("-       --------------             |                 ------------              -");
-        System.out.println("-      ---->   MOV A1,#100         |     #    =  (Immediate Addressing)        -");
-        System.out.println("-                                  |                                           -");
-        System.out.println("-      ---->   ADD 40,stack        |   stack  =  (Stack Addressing)            -");
-        System.out.println("-                                  |                                           -");
-        System.out.println("-      ---->   SUB R3,@R1          |    @     =  (Indirect Addressing)         -");
-        System.out.println("-                                  |                                           -");
-        System.out.println("-      ---->   DIV R2,R3           |  R2,R3   =  (Register Direct Addressing)  -");
-        System.out.println("-                                  |                                           -");
-        System.out.println("-      ---->   LOAD R4,60          |  R4,60   =  (Direct Addressing)           -");
-        System.out.println("-                                  |                                           -");
-        System.out.println("-      ---->   MUL AL,[BP,2]       |   [BP,2] =  (Relative Addressing)         -");
-        System.out.println("-                                  |                                           -");
-        System.out.println("-      ---->   LOAD AL,[SI,2]      |  [SI,2]  =  (Indexed Addressing)          -");
-        System.out.println("-                                  |                                           -");
-        System.out.println("-      ---->   LOAD [BX]           |   [BX]   =  (Register Indirect Addressing)-");
-        System.out.println("-                                  |                                           -");
-        System.out.println("--------------------------------------------------------------------------------\n");
-        System.out.print("Input SI:");
-        String o = scn.next();
-        data1.add("SI");
-        data2.add(o);
-        System.out.print("Input DI:");
-        o = scn.next();
-        data1.add("DI");
-        data2.add(o);
-        System.out.print("Input BX:");
-        o = scn.next();
-        data1.add("BX");
-        data2.add(o);
-        System.out.print("Input BP:");
-        o = scn.next();
-        data1.add("BP");
-        data2.add(o);
-        System.out.println("\n=====================================");
-        setmemory(nmem, mem);
-        System.out.println("\n=====================================");
-        for (text1 = scn.next(), text2 = scn.next(); true; text1 = scn.next(), text2 = scn.next()) {
-            String mess[] = getText(text2);
-            sumt1 = mess[0];
-            sumt2 = mess[1];
-
-            c = sumt2.charAt(0);
-            c1 = sumt2.charAt(sumt2.length() - 1);
-            // ========================================================/ MOV
-            // /======================================================
-            if (text1.equals("MOV") || text1.equals("mov") || text1.equals("LOAD") || text1.equals("load")) {
-                if (c == '#') {
-                    String nohas = sumt2.replace("#", "");
-                    sethasMOV(data1, data2, sumt1, nohas, nmem, mem);
-                    mode = "Immediate Addressing";
-                }else {
-                    setAmovB(data1, data2, sumt1, sumt2, nmem, mem);
-                    mode = "Direct Addressing";
-                }
-                if (c == '@') {
-                    String nohas = sumt2.replace("@", "");
-                    setaddMOV(data1, data2, sumt1, nohas, nmem, mem);
-                    mode = "Indirect Addressing";
-                }
-                if (c == '[' && c1 == ']') {
-                    String noa = sumt2.replace("[", "");
-                    noa = noa.replace("]", "");
-                    int id = searchCom(noa, noa.length());
-                    if (id < 0) {
-                        setaddMOV(data1, data2, sumt1, noa, nmem, mem);
-                    } else {
-                        String tx[] = getText(noa);
-                        String tx1 = tx[0];
-                        String tx2 = tx[1];
-                        if (tx1.equals("SI") || tx1.equals("DI")) {
-                            int i1 = search(data1, data1.size(), tx1);
-                            int num1 = Integer.parseInt(data2.get(i1));
-                            int num2 = Integer.parseInt(tx2);
-                            int sum = num1 + num2;
-                            String s = String.valueOf(sum);
-                            setaddMOV(data1, data2, sumt1, s, nmem, mem);
-                            mode = "Relative Addressing";
-                        }
-                        if (tx1.equals("BP") || tx1.equals("BX")) {
-                            int i1 = search(data1, data1.size(), tx1);
-                            int num1 = Integer.parseInt(data2.get(i1));
-                            int num2 = Integer.parseInt(tx2);
-                            int sum = num1 + num2;
-                            String s = String.valueOf(sum);
-                            setaddMOV(data1, data2, sumt1, s, nmem, mem);
-                            mode = "Relative Addressing";
-                        }
-                    }
-                }
-                if (c == '0' || c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == '6' || c == '7'
-                        || c == '8' || c == '9') {
-                    if (sumt2.equals("stack")) {
-                        setStack(data1, data2, sumt1, mem[9], nmem, mem);
-                        mode = "Stack Addressing";
-                    } else {
-                        setaddMOV(data1, data2, sumt1, sumt2, nmem, mem);
-                        mode = "Direct Addressing";
-                    }
-                } else {
-                    if (sumt2.equals("stack")) {
-                        setStack(data1, data2, sumt1, mem[9], nmem, mem);
-                        mode = "Stack Addressing";
-                    } 
-                }
-            }
-            // ==========================================================/ ADD
-            // /============================================================
-            if (text1.equals("ADD")) {
-                mode=all(mode, c, c1, data1, data2, sumt1, sumt2, nmem, mem, text1);
-            }
-            // ==========================================================/ SUB
-            // /============================================================
-            if (text1.equals("SUB")) {
-                mode=all(mode, c, c1, data1, data2, sumt1, sumt2, nmem, mem, text1);
-            }
-            // ==========================================================/ MUL
-            // /============================================================
-            if (text1.equals("MUL")) {
-                mode=all(mode, c, c1, data1, data2, sumt1, sumt2, nmem, mem, text1);
-            }
-            // ==========================================================/ DIV
-            // /============================================================
-            if (text1.equals("DIV")) {
-                mode=all(mode, c, c1, data1, data2, sumt1, sumt2, nmem, mem, text1);
-            }
-            // =============================================================================================================================
-            System.out.println("\n=====================================");
-            setmemory(nmem, mem);
-            System.out.println("\n=====================================");
-            System.out.println("\nRegister\tResgiser Value");
-            for (int i = 0; i < data1.size(); i++) {
-                System.out.println(data1.get(i) + "\t\t " + data2.get(i));
-            }
-            int i = search(data1, data1.size(), sumt1);
-            int i1 = searchMem(nmem, nmem.length, sumt1);
-            System.out.println("\n=====================================");
-            if (i >= 0 && i >= 0) {
-                System.out.println(data1.get(i) + "=" + data2.get(i) + "-->" + mode);
-            } else {
-                if (sumt1.equals("stack")) {
-                    System.out.println("\n=====================================");
-                    System.out.println(sumt1 + "=" + mem[9] + "--> Stack Addressing");
-                    System.out.println("\n=====================================");
-                    continue;
-                }
-                System.out.println("\n=====================================");
-                if(i1<0){
-                    continue;
-                }
-                System.out.println(sumt1 + "=" + mem[i1] + "-->" + mode);
-                System.out.println("\n=====================================");
-                continue;
-            }
-            System.out.println("\n=====================================");
-            sumt1 = sumt1.replace(sumt1, "");
-            sumt2 = sumt2.replace(sumt2, "");
-        }
-    }
-
 }
