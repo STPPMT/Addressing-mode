@@ -5,7 +5,7 @@ import java.io.IOException;
 class coa {
     public static void main(String[] args) {
         Scanner scn = new Scanner(System.in);
-        String text1, text2, sumt1 = "", sumt2 = "", mode = "";
+        String text1, text2, sumt1 = "", sumt2 = "", mode = "",o;
         char c, c1;
         ArrayList<String> data1 = new ArrayList<String>();
         ArrayList<String> data2 = new ArrayList<String>();
@@ -40,27 +40,17 @@ class coa {
         System.out.println("-                                  |                                           -");
         System.out.println("--------------------------------------------------------------------------------\n");
         System.out.print("Input SI:");
-        String o = scn.next();
-        data1.add("SI");
-        data2.add(o);
+        o = scn.next();data1.add("SI");data2.add(o);
         System.out.print("Input DI:");
-        o = scn.next();
-        data1.add("DI");
-        data2.add(o);
+        o = scn.next();data1.add("DI");data2.add(o);
         System.out.print("Input BX:");
-        o = scn.next();
-        data1.add("BX");
-        data2.add(o);
+        o = scn.next();data1.add("BX");data2.add(o);
         System.out.print("Input BP:");
-        o = scn.next();
-        data1.add("BP");
-        data2.add(o);
+        o = scn.next(); data1.add("BP"); data2.add(o);
         setmemory(nmem, mem);
         for (text1 = scn.next(), text2 = scn.next(); true; text1 = scn.next(), text2 = scn.next()) {
             String mess[] = getText(text2);
-            sumt1 = mess[0];
-            sumt2 = mess[1];
-
+            sumt1 = mess[0];sumt2 = mess[1];
             c = sumt2.charAt(0);
             c1 = sumt2.charAt(sumt2.length() - 1);
             // ========================================================/ MOV
@@ -70,9 +60,8 @@ class coa {
                     String nohas = sumt2.replace("#", "");
                     sethasMOV(data1, data2, sumt1, nohas, nmem, mem);
                     mode = "Immediate Addressing";
-                }else {
-                    setAmovB(data1, data2, sumt1, sumt2, nmem, mem);
-                    mode = "Direct Addressing";
+                    output(data1,data2,nmem,mem, sumt1, nohas,mode);
+                    continue;
                 }
                 if (c == '@') {
                     String nohas = sumt2.replace("@", "");
@@ -81,6 +70,8 @@ class coa {
                     if(n>-1||m>-1){
                         setaddMOV(data1, data2, sumt1, nohas, nmem, mem);
                         mode = "Indirect Addressing";
+                        output(data1,data2,nmem,mem, sumt1, nohas,mode);
+                        continue;
                     }else{
                         mode = "Not in memory";
                         System.out.println(nohas + " --> " + mode);
@@ -93,6 +84,11 @@ class coa {
                     int id = searchCom(noa, noa.length());
                     if (id < 0) {
                         setaddMOV(data1, data2, sumt1, noa, nmem, mem);
+                        int a= search(data1, data1.size(),noa);
+                        int s=searchMem(nmem,nmem.length, data2.get(a));
+                        mode="Register Indirect Addressing";
+                        output(data1,data2,nmem,mem, sumt1, mem[s],mode);
+                         continue;
                     } else {
                         String tx[] = getText(noa);
                         String tx1 = tx[0];
@@ -105,6 +101,8 @@ class coa {
                             String s = String.valueOf(sum);
                             setaddMOV(data1, data2, sumt1, s, nmem, mem);
                             mode = "Relative Addressing";
+                            output(data1,data2,nmem,mem, sumt1, s,mode);
+                            continue;
                         }
                         if (tx1.equals("BP") || tx1.equals("BX")) {
                             int i1 = search(data1, data1.size(), tx1);
@@ -114,6 +112,8 @@ class coa {
                             String s = String.valueOf(sum);
                             setaddMOV(data1, data2, sumt1, s, nmem, mem);
                             mode = "Relative Addressing";
+                            output(data1,data2,nmem,mem, sumt1, s,mode);
+                            continue;
                         }
                     }
                 }
@@ -131,6 +131,12 @@ class coa {
                         setStack(data1, data2, sumt1, mem[9], nmem, mem);
                         mode = "Stack Addressing";
                     } 
+                }
+                if(true) {
+                    setAmovB(data1, data2, sumt1, sumt2, nmem, mem);
+                    mode = "Direct Addressing";
+                    output(data1,data2,nmem,mem, sumt1, sumt2,mode);
+                    continue;
                 }
             }
             // ==========================================================/ ADD
@@ -153,23 +159,20 @@ class coa {
             if (text1.equals("DIV")) {
                 mode=all(mode, c, c1, data1, data2, sumt1, sumt2, nmem, mem, text1);
             }
-            // =============================================================================================================================
-            setmemory(nmem, mem);
+            sumt1 = sumt1.replace(sumt1, "");
+            sumt2 = sumt2.replace(sumt2, "");
+        }
+    }
+    static void output(ArrayList<String> data1,ArrayList<String> data2,String nmem[],String mem[],String m1,String m2,String mode){
+        setmemory(nmem, mem);
             System.out.println("\nRegister\tResgiser Value");
             for (int i = 0; i < data1.size(); i++) {
                 System.out.println(data1.get(i) + "\t\t " + data2.get(i));
             }
-            int i = search(data1, data1.size(), sumt1);
-            int i1 = searchMem(nmem, nmem.length, sumt1);
             System.out.println("\n=====================================");
-            if (i >= 0 && i >= 0) {
-                System.out.println(data1.get(i) + "=" + data2.get(i) + "-->" + mode);
+                System.out.println(m1 + " = " + m2 + " --> " + mode);
+            System.out.println("\n=====================================");
 
-            }
-            System.out.println("\n=====================================");
-            sumt1 = sumt1.replace(sumt1, "");
-            sumt2 = sumt2.replace(sumt2, "");
-        }
     }
 
 
