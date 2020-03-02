@@ -55,9 +55,7 @@ class coa {
         o = scn.next();
         data1.add("BP");
         data2.add(o);
-        System.out.println("\n=====================================");
         setmemory(nmem, mem);
-        System.out.println("\n=====================================");
         for (text1 = scn.next(), text2 = scn.next(); true; text1 = scn.next(), text2 = scn.next()) {
             String mess[] = getText(text2);
             sumt1 = mess[0];
@@ -78,8 +76,16 @@ class coa {
                 }
                 if (c == '@') {
                     String nohas = sumt2.replace("@", "");
-                    setaddMOV(data1, data2, sumt1, nohas, nmem, mem);
-                    mode = "Indirect Addressing";
+                    int n=searchMem(nmem,10,nohas);
+                    int m=search(data1,data1.size(),nohas);
+                    if(n>-1||m>-1){
+                        setaddMOV(data1, data2, sumt1, nohas, nmem, mem);
+                        mode = "Indirect Addressing";
+                    }else{
+                        mode = "Not in memory";
+                        System.out.println(nohas + " --> " + mode);
+                        continue;
+                    }
                 }
                 if (c == '[' && c1 == ']') {
                     String noa = sumt2.replace("[", "");
@@ -148,9 +154,7 @@ class coa {
                 mode=all(mode, c, c1, data1, data2, sumt1, sumt2, nmem, mem, text1);
             }
             // =============================================================================================================================
-            System.out.println("\n=====================================");
             setmemory(nmem, mem);
-            System.out.println("\n=====================================");
             System.out.println("\nRegister\tResgiser Value");
             for (int i = 0; i < data1.size(); i++) {
                 System.out.println(data1.get(i) + "\t\t " + data2.get(i));
@@ -160,20 +164,7 @@ class coa {
             System.out.println("\n=====================================");
             if (i >= 0 && i >= 0) {
                 System.out.println(data1.get(i) + "=" + data2.get(i) + "-->" + mode);
-            } else {
-                if (sumt1.equals("stack")) {
-                    System.out.println("\n=====================================");
-                    System.out.println(sumt1 + "=" + mem[9] + "--> Stack Addressing");
-                    System.out.println("\n=====================================");
-                    continue;
-                }
-                System.out.println("\n=====================================");
-                if(i1<0){
-                    continue;
-                }
-                System.out.println(sumt1 + "=" + mem[i1] + "-->" + mode);
-                System.out.println("\n=====================================");
-                continue;
+
             }
             System.out.println("\n=====================================");
             sumt1 = sumt1.replace(sumt1, "");
@@ -321,11 +312,13 @@ class coa {
     }
 
     static void setmemory(String nmem[], String mem[]) {
+        System.out.println("\n=====================================");
         System.out.println("\t Main Memory\n");
         System.out.print("(TOS)");
         for (int i = nmem.length - 1; i >= 0; i--) {
             System.out.println("\t" + nmem[i] + "\t| " + mem[i]);
         }
+        System.out.println("\n=====================================");
     }
 
     static void asmd(ArrayList<String> data1, ArrayList<String> data2, String sumt1, String sumt2, String nmem[],
