@@ -5,7 +5,7 @@ import java.io.IOException;
 class coa {
     public static void main(String[] args) {
         Scanner scn = new Scanner(System.in);
-        String text1, text2, sumt1 = "", sumt2 = "", mode = "",o;
+        String text1, text2, sumt1 = "", sumt2 = "", mode = "", o;
         char c, c1;
         ArrayList<String> data1 = new ArrayList<String>();
         ArrayList<String> data2 = new ArrayList<String>();
@@ -40,39 +40,79 @@ class coa {
         System.out.println("-                                  |                                           -");
         System.out.println("--------------------------------------------------------------------------------\n");
         System.out.print("Input SI:");
-        o = scn.next();data1.add("SI");data2.add(o);
+        o = scn.next();
+        data1.add("SI");
+        data2.add(o);
         System.out.print("Input DI:");
-        o = scn.next();data1.add("DI");data2.add(o);
+        o = scn.next();
+        data1.add("DI");
+        data2.add(o);
         System.out.print("Input BX:");
-        o = scn.next();data1.add("BX");data2.add(o);
+        o = scn.next();
+        data1.add("BX");
+        data2.add(o);
         System.out.print("Input BP:");
-        o = scn.next(); data1.add("BP"); data2.add(o);
+        o = scn.next();
+        data1.add("BP");
+        data2.add(o);
         setmemory(nmem, mem);
         for (text1 = scn.next(), text2 = scn.next(); true; text1 = scn.next(), text2 = scn.next()) {
             String mess[] = getText(text2);
-            sumt1 = mess[0];sumt2 = mess[1];
+            sumt1 = mess[0];
+            sumt2 = mess[1];
             c = sumt2.charAt(0);
             c1 = sumt2.charAt(sumt2.length() - 1);
+            int sx1 = search(data1, data1.size(), sumt1);
+            int sx2 = search(data1, data1.size(), sumt2);
+            int sx3 = searchMem(nmem, nmem.length, sumt1);
+            int sx4 = searchMem(nmem, nmem.length, sumt2);
             // ========================================================/ MOV
             // /======================================================
             if (text1.equals("MOV") || text1.equals("mov") || text1.equals("LOAD") || text1.equals("load")) {
                 if (c == '#') {
                     String nohas = sumt2.replace("#", "");
-                    sethasMOV(data1, data2, sumt1, nohas, nmem, mem);
-                    mode = "Immediate Addressing";
-                    output(data1,data2,nmem,mem, sumt1, nohas,mode);
+                    String re = sethasMOV(data1, data2, sumt1, nohas, nmem, mem);
+                    if (sumt1.equals("stack") && (sx2 >= 0 || sx4 >= 0)) {
+                        if (re.equals("e")) {
+                            mode = "ERROR!";
+                        } else {
+                            mode = "Immediate Addressing";
+                        }
+                        output(data1, data2, nmem, mem, sumt1, nohas, mode);
+                        continue;
+                    }
+                    if (re.equals("e")) {
+                        mode = "ERROR!";
+                    } else {
+                        mode = "Immediate Addressing";
+                    }
+                    output(data1, data2, nmem, mem, sumt1, nohas, mode);
                     continue;
                 }
                 if (c == '@') {
                     String nohas = sumt2.replace("@", "");
-                    int n=searchMem(nmem,10,nohas);
-                    int m=search(data1,data1.size(),nohas);
-                    if(n>-1||m>-1){
+                    int n = searchMem(nmem, nmem.length, nohas);
+                    int m = search(data1, data1.size(), nohas);
+                    if (sumt1.equals("stack")) {
+                        if (sumt1.equals("stack") &&n>=0) {
+                            sethasMOV(data1, data2, sumt1, nohas, nmem, mem);
+                            mode = "Indirect Addressing";
+                            output(data1, data2, nmem, mem, sumt1, mem[n], mode);
+                            continue;
+                        } else {
+                            mode = "Not in memory";
+                            System.out.println(nohas + " --> " + mode);
+                            continue;
+                        }
+                    }
+                   
+                    if (n > -1 || m > -1) {
                         setaddMOV(data1, data2, sumt1, nohas, nmem, mem);
                         mode = "Indirect Addressing";
-                        output(data1,data2,nmem,mem, sumt1, nohas,mode);
+                        int s = searchMem(nmem, nmem.length, nohas);
+                        output(data1, data2, nmem, mem, sumt1, mem[s], mode);
                         continue;
-                    }else{
+                    } else {
                         mode = "Not in memory";
                         System.out.println(nohas + " --> " + mode);
                         continue;
@@ -84,11 +124,11 @@ class coa {
                     int id = searchCom(noa, noa.length());
                     if (id < 0) {
                         setaddMOV(data1, data2, sumt1, noa, nmem, mem);
-                        int a= search(data1, data1.size(),noa);
-                        int s=searchMem(nmem,nmem.length, data2.get(a));
-                        mode="Register Indirect Addressing";
-                        output(data1,data2,nmem,mem, sumt1, mem[s],mode);
-                         continue;
+                        mode = "Register Indirect Addressing";
+                        int a = search(data1, data1.size(), noa);
+                        int s = searchMem(nmem, nmem.length, data2.get(a));
+                        output(data1, data2, nmem, mem, sumt1, mem[s], mode);
+                        continue;
                     } else {
                         String tx[] = getText(noa);
                         String tx1 = tx[0];
@@ -100,8 +140,9 @@ class coa {
                             int sum = num1 + num2;
                             String s = String.valueOf(sum);
                             setaddMOV(data1, data2, sumt1, s, nmem, mem);
-                            mode = "Relative Addressing";
-                            output(data1,data2,nmem,mem, sumt1, s,mode);
+                            mode = "Indexed Addressing";
+                            int s1 = searchMem(nmem, nmem.length, s);
+                            output(data1, data2, nmem, mem, sumt1, mem[s1], mode);
                             continue;
                         }
                         if (tx1.equals("BP") || tx1.equals("BX")) {
@@ -112,69 +153,73 @@ class coa {
                             String s = String.valueOf(sum);
                             setaddMOV(data1, data2, sumt1, s, nmem, mem);
                             mode = "Relative Addressing";
-                            output(data1,data2,nmem,mem, sumt1, s,mode);
+                            int s1 = searchMem(nmem, nmem.length, s);
+                            output(data1, data2, nmem, mem, sumt1, mem[s1], mode);
                             continue;
                         }
                     }
                 }
-                if (c == '0' || c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == '6' || c == '7'
-                        || c == '8' || c == '9') {
-                    if (sumt2.equals("stack")) {
-                        setStack(data1, data2, sumt1, mem[9], nmem, mem);
-                        mode = "Stack Addressing";
-                    } else {
-                        setaddMOV(data1, data2, sumt1, sumt2, nmem, mem);
-                        mode = "Direct Addressing";
-                    }
-                } else {
-                    if (sumt2.equals("stack")) {
-                        setStack(data1, data2, sumt1, mem[9], nmem, mem);
-                        mode = "Stack Addressing";
-                    } 
-                }
-                if(true) {
-                    setAmovB(data1, data2, sumt1, sumt2, nmem, mem);
-                    mode = "Direct Addressing";
-                    output(data1,data2,nmem,mem, sumt1, sumt2,mode);
+                if ((sx1 == -1 || sx1 >= 0) && sumt2.equals("stack")) {
+                    setStack(data1, data2, sumt1, mem[9], nmem, mem);
+                    mode = "Stack Addressing";
+                    output(data1, data2, nmem, mem, sumt1, mem[9], mode);
                     continue;
+                }
+
+                if (sx1 >= 0 && sx2 >= 0) {
+                    setAmovB(data1, data2, sumt1, sumt2, nmem, mem);
+                    mode = "Register Direct Addressing";
+                    int a = search(data1, data1.size(), sumt2);
+                    output(data1, data2, nmem, mem, sumt1, data2.get(a), mode);
+                    continue;
+                }
+                if ((sx1 == -1 || sx1 >= 0) && sx4 >= 0) {
+                    setaddMOV(data1, data2, sumt1, sumt2, nmem, mem);
+                    mode = "Direct Addressing";
+                    int s = searchMem(nmem, nmem.length, sumt2);
+                    output(data1, data2, nmem, mem, sumt1, mem[s], mode);
+                    continue;
+                } else {
+                    System.out.print(sumt2 + " Not in memory");
                 }
             }
             // ==========================================================/ ADD
             // /============================================================
             if (text1.equals("ADD")) {
-                mode=all(mode, c, c1, data1, data2, sumt1, sumt2, nmem, mem, text1);
+                mode = all(mode, c, c1, data1, data2, sumt1, sumt2, nmem, mem, text1);
             }
             // ==========================================================/ SUB
             // /============================================================
             if (text1.equals("SUB")) {
-                mode=all(mode, c, c1, data1, data2, sumt1, sumt2, nmem, mem, text1);
+                mode = all(mode, c, c1, data1, data2, sumt1, sumt2, nmem, mem, text1);
             }
             // ==========================================================/ MUL
             // /============================================================
             if (text1.equals("MUL")) {
-                mode=all(mode, c, c1, data1, data2, sumt1, sumt2, nmem, mem, text1);
+                mode = all(mode, c, c1, data1, data2, sumt1, sumt2, nmem, mem, text1);
             }
             // ==========================================================/ DIV
             // /============================================================
             if (text1.equals("DIV")) {
-                mode=all(mode, c, c1, data1, data2, sumt1, sumt2, nmem, mem, text1);
+                mode = all(mode, c, c1, data1, data2, sumt1, sumt2, nmem, mem, text1);
             }
             sumt1 = sumt1.replace(sumt1, "");
             sumt2 = sumt2.replace(sumt2, "");
         }
     }
-    static void output(ArrayList<String> data1,ArrayList<String> data2,String nmem[],String mem[],String m1,String m2,String mode){
+
+    static void output(ArrayList<String> data1, ArrayList<String> data2, String nmem[], String mem[], String m1,
+            String m2, String mode) {
         setmemory(nmem, mem);
-            System.out.println("\nRegister\tResgiser Value");
-            for (int i = 0; i < data1.size(); i++) {
-                System.out.println(data1.get(i) + "\t\t " + data2.get(i));
-            }
-            System.out.println("\n=====================================");
-                System.out.println(m1 + " = " + m2 + " --> " + mode);
-            System.out.println("\n=====================================");
+        System.out.println("\nRegister\tResgiser Value");
+        for (int i = 0; i < data1.size(); i++) {
+            System.out.println(data1.get(i) + "\t\t " + data2.get(i));
+        }
+        System.out.println("\n=====================================");
+        System.out.println(m1 + " = " + m2 + " --> " + mode);
+        System.out.println("\n=====================================");
 
     }
-
 
     static int search(ArrayList<String> mat, int n, String x) {
         int sum = -1;
@@ -222,34 +267,35 @@ class coa {
 
     static String sethasMOV(ArrayList<String> data1, ArrayList<String> data2, String sumt1, String sumt2, String nmem[],
             String mem[]) {
+        String mode = "";
         if (sumt1.equals("stack")) {
             try {
-                int nbe = Integer.parseInt(sumt2);
+                Integer.parseInt(sumt2);
                 mem[mem.length - 1] = mem[mem.length - 1].replace(mem[mem.length - 1], "");
                 mem[mem.length - 1] = sumt2;
             } catch (Exception e) {
-                System.out.println("Error");
+                mode = "e";
             }
         } else {
             int id = searchMem(nmem, nmem.length, sumt1);
             if (id >= 0) {
                 try {
-                    int nbe = Integer.parseInt(sumt2);
+                    Integer.parseInt(sumt2);
                     mem[id] = mem[id].replace(mem[id], "");
                     mem[id] = sumt2;
                 } catch (Exception e) {
-                    System.out.println("Error");
+                    mode = "e";
                 }
             } else {
                 try {
-                    int nbe = Integer.parseInt(sumt2);
+                    Integer.parseInt(sumt2);
                     getMov(data1, data2, sumt1, sumt2);
                 } catch (Exception e) {
-                    System.out.println("Error");
+                    mode = "e";
                 }
             }
         }
-        return sumt2;
+        return mode;
     }
 
     static void setaddMOV(ArrayList<String> data1, ArrayList<String> data2, String sumt1, String sumt2, String nmem[],
@@ -260,7 +306,7 @@ class coa {
         int room11 = search(data1, data1.size(), sumt2);// B room1
         int room22 = searchMem(nmem, nmem.length, sumt2);// B room2
         try {
-            int nber = Integer.parseInt(sumt1);
+            Integer.parseInt(sumt1);
             if (room2 >= 0 && room11 >= 0) {
                 int sum = searchMem(nmem, nmem.length, data2.get(room11));
                 mem[room2] = mem[room2].replace(mem[room2], "");
@@ -331,7 +377,7 @@ class coa {
         try {
             int num2 = Integer.parseInt(nohas);
             try {
-                int numm1 = Integer.parseInt(sumt1);
+                Integer.parseInt(sumt1);
                 int n = searchMem(nmem, nmem.length, sumt1);
                 if (n >= 0) {
                     int num1 = Integer.parseInt(mem[n]);
@@ -383,7 +429,7 @@ class coa {
         int room11 = search(data1, data1.size(), sumt2);// B room1
         int room22 = searchMem(nmem, nmem.length, sumt2);// B room2
         try {
-            int nber1 = Integer.parseInt(sumt1);
+            Integer.parseInt(sumt1);
             if (room2 >= 0 && room11 >= 0) {
                 int num1 = Integer.parseInt(mem[room2]);
                 int id = searchMem(nmem, nmem.length, data2.get(room11));
@@ -459,12 +505,13 @@ class coa {
             }
         }
     }
+
     static String all(String mode, char c, char c1, ArrayList<String> data1, ArrayList<String> data2, String sumt1,
             String sumt2, String nmem[], String mem[], String text1) {
         if (c == '#') {
             asmd(data1, data2, sumt1, sumt2, nmem, mem, text1);
             mode = "Immediate Addressing";
-        }else {
+        } else {
             setMOVasmd(text1, data1, data2, sumt1, sumt2, nmem, mem);
             mode = "Direct Addressing";
         }
@@ -506,18 +553,19 @@ class coa {
         }
         if (c == '0' || c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == '6' || c == '7' || c == '8'
                 || c == '9') {
-                    if (sumt2.equals("stack")) {
-                        Stack(text1,data1, data2, sumt1, mem[9], nmem, mem);
-                        mode = "Stack Addressing";
-                    } else {
-                        setaddasmd(data1, data2, sumt1, sumt2, nmem, mem, text1);
-                        mode = "Direct Addressing";}
-        } 
-        else {
             if (sumt2.equals("stack")) {
-                Stack(text1,data1, data2, sumt1, mem[9], nmem, mem);
+                Stack(text1, data1, data2, sumt1, mem[9], nmem, mem);
                 mode = "Stack Addressing";
-            } }
+            } else {
+                setaddasmd(data1, data2, sumt1, sumt2, nmem, mem, text1);
+                mode = "Direct Addressing";
+            }
+        } else {
+            if (sumt2.equals("stack")) {
+                Stack(text1, data1, data2, sumt1, mem[9], nmem, mem);
+                mode = "Stack Addressing";
+            }
+        }
         return mode;
     }
 
@@ -534,6 +582,7 @@ class coa {
             data2.add(data2.get(room11));
         }
     }
+
     static void setStack(ArrayList<String> data1, ArrayList<String> data2, String sumt1, String sumt2, String nmem[],
             String mem[]) {
         int room1 = search(data1, data1.size(), sumt1);// A room1;
@@ -545,8 +594,9 @@ class coa {
             data2.add(mem[9]);
         }
     }
-    static void Stack(String text1,ArrayList<String> data1, ArrayList<String> data2, String sumt1, String sumt2, String nmem[],
-            String mem[]) {
+
+    static void Stack(String text1, ArrayList<String> data1, ArrayList<String> data2, String sumt1, String sumt2,
+            String nmem[], String mem[]) {
         int room1 = search(data1, data1.size(), sumt1);// A room1;
 
         if (room1 >= 0) {
@@ -570,6 +620,7 @@ class coa {
             data2.add(mem[9]);
         }
     }
+
     static void setMOVasmd(String text1, ArrayList<String> data1, ArrayList<String> data2, String sumt1, String sumt2,
             String nmem[], String mem[]) {
         int room1 = search(data1, data1.size(), sumt1);// A room1;
