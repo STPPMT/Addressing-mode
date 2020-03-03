@@ -94,10 +94,18 @@ class coa {
                     int n = searchMem(nmem, nmem.length, nohas);
                     int m = search(data1, data1.size(), nohas);
                     if (sumt1.equals("stack")) {
-                        mode = "Indirect Addressing";
-                        allst(data1, data2, nmem, mem,sumt1,mem[n],mode);
-                        continue;
+                        if (sumt1.equals("stack") &&n>=0) {
+                            sethasMOV(data1, data2, sumt1, nohas, nmem, mem);
+                            mode = "Indirect Addressing";
+                            output(data1, data2, nmem, mem, sumt1, mem[n], mode);
+                            continue;
+                        } else {
+                            mode = "Not in memory";
+                            System.out.println(nohas + " --> " + mode);
+                            continue;
+                        }
                     }
+                   
                     if (n > -1 || m > -1) {
                         setaddMOV(data1, data2, sumt1, nohas, nmem, mem);
                         mode = "Indirect Addressing";
@@ -115,14 +123,10 @@ class coa {
                     noa = noa.replace("]", "");
                     int id = searchCom(noa, noa.length());
                     if (id < 0) {
+                        setaddMOV(data1, data2, sumt1, noa, nmem, mem);
                         mode = "Register Indirect Addressing";
                         int a = search(data1, data1.size(), noa);
                         int s = searchMem(nmem, nmem.length, data2.get(a));
-                        if (sumt1.equals("stack")) {
-                            allst(data1, data2, nmem, mem,sumt1,mem[s],mode);
-                            continue;
-                        }
-                        setaddMOV(data1, data2, sumt1, noa, nmem, mem);
                         output(data1, data2, nmem, mem, sumt1, mem[s], mode);
                         continue;
                     } else {
@@ -135,13 +139,9 @@ class coa {
                             int num2 = Integer.parseInt(tx2);
                             int sum = num1 + num2;
                             String s = String.valueOf(sum);
-                            int s1 = searchMem(nmem, nmem.length, s);
-                            mode = "Indexed Addressing";
-                            if (sumt1.equals("stack")) {
-                                allst(data1, data2, nmem, mem,sumt1,mem[s1],mode);
-                                continue;
-                            }
                             setaddMOV(data1, data2, sumt1, s, nmem, mem);
+                            mode = "Indexed Addressing";
+                            int s1 = searchMem(nmem, nmem.length, s);
                             output(data1, data2, nmem, mem, sumt1, mem[s1], mode);
                             continue;
                         }
@@ -151,13 +151,9 @@ class coa {
                             int num2 = Integer.parseInt(tx2);
                             int sum = num1 + num2;
                             String s = String.valueOf(sum);
-                            int s1 = searchMem(nmem, nmem.length, s);
-                            mode = "Relative Addressing";
-                            if (sumt1.equals("stack")) {
-                                allst(data1, data2, nmem, mem,sumt1,mem[s1],mode);
-                                continue;
-                            }
                             setaddMOV(data1, data2, sumt1, s, nmem, mem);
+                            mode = "Relative Addressing";
+                            int s1 = searchMem(nmem, nmem.length, s);
                             output(data1, data2, nmem, mem, sumt1, mem[s1], mode);
                             continue;
                         }
@@ -209,19 +205,6 @@ class coa {
             }
             sumt1 = sumt1.replace(sumt1, "");
             sumt2 = sumt2.replace(sumt2, "");
-        }
-    }
-
-    static void allst(ArrayList<String> data1, ArrayList<String> data2, String nmem[], String mem[], String sumt1,
-    String sumt2, String mode) {
-        if (sumt1.equals("stack")) {
-            if (sumt1.equals("stack")) {
-                sethasMOV(data1, data2, sumt1, sumt2, nmem, mem);
-                output(data1, data2, nmem, mem, sumt1, sumt2, mode);
-            } else {
-                mode = "Not in memory";
-                System.out.println(sumt2 + " --> " + mode);
-            }
         }
     }
 
