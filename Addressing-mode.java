@@ -459,7 +459,6 @@ class coa {
             }
         }
     }
-
     static String all(String mode, char c, char c1, ArrayList<String> data1, ArrayList<String> data2, String sumt1,
             String sumt2, String nmem[], String mem[], String text1) {
         if (c == '#') {
@@ -571,8 +570,6 @@ class coa {
             data2.add(mem[9]);
         }
     }
-
-
     static void setMOVasmd(String text1, ArrayList<String> data1, ArrayList<String> data2, String sumt1, String sumt2,
             String nmem[], String mem[]) {
         int room1 = search(data1, data1.size(), sumt1);// A room1;
