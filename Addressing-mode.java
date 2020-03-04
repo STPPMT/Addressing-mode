@@ -1,5 +1,5 @@
 import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.Scanne;
 import java.io.IOException;
 
 class coa {
