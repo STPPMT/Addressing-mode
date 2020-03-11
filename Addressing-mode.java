@@ -64,7 +64,7 @@ class coa {
             c1 = sumt2.charAt(sumt2.length() - 1);
             int sx1 = search(data1, data1.size(), sumt1);
             int sx2 = search(data1, data1.size(), sumt2);
-            int sx3 = searchMem(nmem, nmem.length, sumt1);
+            //int sx3 = searchMem(nmem, nmem.length, sumt1);
             int sx4 = searchMem(nmem, nmem.length, sumt2);
             // ========================================================/ MOV
             // /======================================================
@@ -101,7 +101,7 @@ class coa {
                     if (n > -1 || m > -1) {
                         setaddMOV(data1, data2, sumt1, nohas, nmem, mem);
                         mode = "Indirect Addressing";
-                        int s = searchMem(nmem, nmem.length, nohas);
+                        //int s = searchMem(nmem, nmem.length, nohas);
                         output(data1, data2, nmem, mem, sumt1, mem[s], mode);
                         continue;
                     } else {
