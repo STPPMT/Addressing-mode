@@ -170,7 +170,7 @@ class coa {
                     continue;
                 }
 
-                if (sx1 == -1 && sx1 >= 0) {
+                if (sx1 == -1 || sx1 >= 0) {
                     setAmovB(data1, data2, sumt1, sumt2, nmem, mem);
                     mode = "Register Direct Addressing";
                     int a = search(data1, data1.size(), sumt2);
