@@ -104,12 +104,12 @@ class coa {
                             int x = searchMem(nmem, nmem.length,data2.get(m));
                             setaddMOV(data1, data2, sumt1, mem[x], nmem, mem);
                             output(data1, data2, nmem, mem, sumt1, mem[x], mode);
-                        continue;
+                            continue;
                         }else{
                             setaddMOV(data1, data2, sumt1, nohas, nmem, mem);
                             int s = searchMem(nmem, nmem.length, nohas);
                             output(data1, data2, nmem, mem, sumt1, mem[s], mode);
-                         continue;
+                            continue;
                         }
                        
                     } else {
@@ -294,7 +294,6 @@ class coa {
 
     static void getMov(ArrayList<String> data1, ArrayList<String> data2, String sumt1, String s) {
         int index1 = search(data1, data1.size(), sumt1);
-        System.out.println(sumt1);
         if (index1 < 0) {
             data1.add(sumt1);
             data2.add(s);
