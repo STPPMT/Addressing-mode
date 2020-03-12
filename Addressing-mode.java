@@ -56,7 +56,7 @@ class coa {
         data1.add("BP");
         data2.add(o);
         setmemory(nmem, mem);
-        for (text1 = scn.next(), text2 = scn.next(); true; text1 = scn.next(), text2 = scn.next()) {
+        for (System.out.print("Input > "),text1 = scn.next(), text2 = scn.next(); true;System.out.print("Input > "), text1 = scn.next(), text2 = scn.next()) {
             String mess[] = getText(text2);
             sumt1 = mess[0];
             sumt2 = mess[1];
@@ -71,6 +71,12 @@ class coa {
             if (text1.equals("MOV") || text1.equals("mov") || text1.equals("LOAD") || text1.equals("load")) {
                 if (c == '#') {
                     String nohas = sumt2.replace("#", "");
+                    try {
+                        Integer.parseInt(nohas);
+                    } catch (Exception e) {
+                        System.out.println(nohas+" Not number");
+                        continue;
+                    }
                     String re = sethasMOV(data1, data2, sumt1, nohas, nmem, mem);
                     if (sumt1.equals("stack") && (sx2 >= 0 || sx4 >= 0)) {
                         if (re.equals("e")) {
@@ -101,10 +107,9 @@ class coa {
                     if (n > -1 || m > -1) {
                         mode = "Indirect Addressing";
                         if(m>=0){
-                            int x = searchMem(nmem, nmem.length,data2.get(m));
-                            data1.add(sumt1);
-                            data2.add(mem[x]);
-                            output(data1, data2, nmem, mem, sumt1, mem[x], mode);
+                            setaddMOV(data1, data2, sumt1, nohas, nmem, mem);
+                            int x = search(data1, data1.size(), sumt1);
+                            output(data1, data2, nmem, mem, sumt1, data2.get(x), mode);
                             continue;
                         }else{
                             setaddMOV(data1, data2, sumt1, nohas, nmem, mem);
