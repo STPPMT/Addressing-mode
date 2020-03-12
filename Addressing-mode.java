@@ -102,7 +102,8 @@ class coa {
                         mode = "Indirect Addressing";
                         if(m>=0){
                             int x = searchMem(nmem, nmem.length,data2.get(m));
-                            setaddMOV(data1, data2, sumt1, mem[x], nmem, mem);
+                            data1.add(sumt1);
+                            data2.add(mem[x]);
                             output(data1, data2, nmem, mem, sumt1, mem[x], mode);
                             continue;
                         }else{
