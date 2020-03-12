@@ -177,7 +177,7 @@ class coa {
                     output(data1, data2, nmem, mem, sumt1, data2.get(a), mode);
                     continue;
                 }
-                if (((sx1 == -1 || sx1 >= 0)&&sx3>=0) && sx4 >= 0) {
+                if ((sx1 == -1 || sx1 >= 0) && sx4 >= 0) {
                     setaddMOV(data1, data2, sumt1, sumt2, nmem, mem);
                     mode = "Direct Addressing";
                     int s = searchMem(nmem, nmem.length, sumt2);
@@ -287,7 +287,6 @@ class coa {
 
     static void getMov(ArrayList<String> data1, ArrayList<String> data2, String sumt1, String s) {
         int index1 = search(data1, data1.size(), sumt1);
-        System.out.println(sumt1);
         if (index1 < 0) {
             data1.add(sumt1);
             data2.add(s);
@@ -545,8 +544,10 @@ class coa {
         for (;;) {
             if (c == '#') {
                 String nohas = sumt2.replace("#", "");
+                int s = search(data1, data1.size(), sumt1);
                 String re = sethasMOV(data1, data2, sumt1, nohas, nmem, mem);
                 asmd(data1, data2, sumt1, sumt2, nmem, mem, text1);
+                output(data1, data2, nmem, mem, sumt1, data2.get(s), mode);
                 break;
             }
             if (c == '@') {
