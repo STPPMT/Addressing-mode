@@ -99,11 +99,19 @@ class coa {
                         continue;
                     }
                     if (n > -1 || m > -1) {
-                        setaddMOV(data1, data2, sumt1, nohas, nmem, mem);
                         mode = "Indirect Addressing";
-                        int s = searchMem(nmem, nmem.length, nohas);
-                        output(data1, data2, nmem, mem, sumt1, mem[s], mode);
+                        if(m>=0){
+                            int x = searchMem(nmem, nmem.length,data2.get(m));
+                            setaddMOV(data1, data2, sumt1, mem[x], nmem, mem);
+                            output(data1, data2, nmem, mem, sumt1, mem[x], mode);
                         continue;
+                        }else{
+                            setaddMOV(data1, data2, sumt1, nohas, nmem, mem);
+                            int s = searchMem(nmem, nmem.length, nohas);
+                            output(data1, data2, nmem, mem, sumt1, mem[s], mode);
+                         continue;
+                        }
+                       
                     } else {
                         mode = "Not in memory";
                         System.out.println(nohas + " --> " + mode);
@@ -170,18 +178,17 @@ class coa {
                     continue;
                 }
 
-                if (sx1 == -1 || sx1 >= 0) {
+                if ((sx1 == -1 || sx1 >= 0) && sx2 >= 0) {
                     setAmovB(data1, data2, sumt1, sumt2, nmem, mem);
                     mode = "Register Direct Addressing";
-                    int a = search(data1, data1.size(), sumt2);
+                    int a = search(data1, data1.size(), sumt1);
                     output(data1, data2, nmem, mem, sumt1, data2.get(a), mode);
                     continue;
                 }
-                if ((sx1 == -1 || sx1 >= 0)&& sx4>=0) {
+                if ((sx1 == -1 || sx1 >= 0) && sx4 >= 0) {
                     setaddMOV(data1, data2, sumt1, sumt2, nmem, mem);
                     mode = "Direct Addressing";
-                    int s = searchMem(nmem, nmem.length, sumt2);
-                    output(data1, data2, nmem, mem, sumt1, mem[s], mode);
+                    output(data1, data2, nmem, mem, sumt1, mem[sx4], mode);
                     continue;
                 } else {
                     System.out.print(sumt2 + " Not in memory");
