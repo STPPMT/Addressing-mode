@@ -56,7 +56,8 @@ class coa {
         data1.add("BP");
         data2.add(o);
         setmemory(nmem, mem);
-        for (System.out.print("Input > "),text1 = scn.next(), text2 = scn.next(); true;System.out.print("Input > "), text1 = scn.next(), text2 = scn.next()) {
+        for (System.out.print("Input > "), text1 = scn.next(), text2 = scn.next(); true; System.out
+                .print("Input > "), text1 = scn.next(), text2 = scn.next()) {
             String mess[] = getText(text2);
             sumt1 = mess[0];
             sumt2 = mess[1];
@@ -74,7 +75,7 @@ class coa {
                     try {
                         Integer.parseInt(nohas);
                     } catch (Exception e) {
-                        System.out.println(nohas+" Not number");
+                        System.out.println(nohas + " Not number");
                         continue;
                     }
                     String re = sethasMOV(data1, data2, sumt1, nohas, nmem, mem);
@@ -106,18 +107,18 @@ class coa {
                     }
                     if (n > -1 || m > -1) {
                         mode = "Indirect Addressing";
-                        if(m>=0){
+                        if (m >= 0) {
                             setaddMOV(data1, data2, sumt1, nohas, nmem, mem);
                             int x = search(data1, data1.size(), sumt1);
                             output(data1, data2, nmem, mem, sumt1, data2.get(x), mode);
                             continue;
-                        }else{
+                        } else {
                             setaddMOV(data1, data2, sumt1, nohas, nmem, mem);
                             int s = searchMem(nmem, nmem.length, nohas);
                             output(data1, data2, nmem, mem, sumt1, mem[s], mode);
                             continue;
                         }
-                       
+
                     } else {
                         mode = "Not in memory";
                         System.out.println(nohas + " --> " + mode);
@@ -183,7 +184,13 @@ class coa {
                     output(data1, data2, nmem, mem, sumt1, mem[9], mode);
                     continue;
                 }
-
+                if (sx3 >= 0 && sx2 >= 0) {
+                    mode = "Direct Addressing";
+                    mem[sx3] = mem[sx3].replace(mem[sx3], "");
+                    mem[sx3] = data2.get(sx2);
+                    output(data1, data2, nmem, mem, sumt1,data2.get(sx2), mode);
+                    continue;
+                }
                 if ((sx1 == -1 || sx1 >= 0) && sx2 >= 0) {
                     setAmovB(data1, data2, sumt1, sumt2, nmem, mem);
                     mode = "Register Direct Addressing";
@@ -191,6 +198,7 @@ class coa {
                     output(data1, data2, nmem, mem, sumt1, data2.get(a), mode);
                     continue;
                 }
+
                 if ((sx1 == -1 || sx1 >= 0) && sx4 >= 0) {
                     setaddMOV(data1, data2, sumt1, sumt2, nmem, mem);
                     mode = "Direct Addressing";
