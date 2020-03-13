@@ -565,9 +565,8 @@ class coa {
             String sumt2, String nmem[], String mem[], String text1, int sx1, int sx2, int sx4) {
         for (;;) {
             if (c == '#') {
-                String nohas = sumt2.replace("#", "");
-                String re = sethasMOV(data1, data2, sumt1, nohas, nmem, mem);
                 asmd(data1, data2, sumt1, sumt2, nmem, mem, text1);
+                output(data1, data2, nmem, mem, sumt1, data2.get(sx1), mode);
                 break;
             }
             if (c == '@') {
@@ -623,7 +622,7 @@ class coa {
                             break;
                         }
                         setaddasmd(data1, data2, sumt1, s, nmem, mem, text1);
-                        output(data1, data2, nmem, mem, sumt1, mem[s1], mode);
+                        output(data1, data2, nmem, mem, sumt1, data2.get(sx1), mode);
                         break;
                     }
                     if (tx1.equals("BP") || tx1.equals("BX")) {
@@ -639,7 +638,7 @@ class coa {
                             break;
                         }
                         setaddasmd(data1, data2, sumt1, s, nmem, mem, text1);
-                        output(data1, data2, nmem, mem, sumt1, mem[s1], mode);
+                        output(data1, data2, nmem, mem, sumt1, data2.get(sx1), mode);
                         break;
                     }
                 }
@@ -647,7 +646,7 @@ class coa {
             if (sx1 >= 0 && sumt2.equals("stack")) {
                 Stack(text1, data1, data2, sumt1, mem[9], nmem, mem);
                 mode = "Stack Addressing";
-                output(data1, data2, nmem, mem, sumt1, mem[9], mode);
+                output(data1, data2, nmem, mem, sumt1, data2.get(sx1), mode);
                 break;
             }
             if (sx1 >= 0 && sx2 >= 0) {
@@ -657,7 +656,7 @@ class coa {
                 output(data1, data2, nmem, mem, sumt1, data2.get(a), mode);
                 break;
             }
-            if (sx1 == -1 || sx1 >= 0) {
+            if (sx1 >= 0) {
                 setaddasmd(data1, data2, sumt1, sumt2, nmem, mem, text1);
                 mode = "Direct Addressing";
                 int s = searchMem(nmem, nmem.length, sumt2);
