@@ -58,6 +58,7 @@ class coa {
         setmemory(nmem, mem);
         for (System.out.print("Input > "), text1 = scn.next(), text2 = scn.next(); true; System.out
                 .print("Input > "), text1 = scn.next(), text2 = scn.next()) {
+            if(text1.equals("end")){break;}
             String mess[] = getText(text2);
             sumt1 = mess[0];
             sumt2 = mess[1];
