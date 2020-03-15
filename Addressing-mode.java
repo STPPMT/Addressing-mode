@@ -15,6 +15,7 @@ class coa {
             int mes = (int) (Math.random() * 101) + 0;
             mem[i] = String.valueOf(mes);
         }
+        
         System.out.println("                      \"How to fill out information\"                          ");
         System.out.println("                     --------------------------------                          ");
         System.out.println("--------------------------------------------------------------------------------");
